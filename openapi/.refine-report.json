@@ -1,0 +1,22 @@
+{
+  "provider": "superglue",
+  "sources": [
+    "superglue-openapi.yml"
+  ],
+  "outputs": [
+    "superglue-connections-api-openapi.yml",
+    "superglue-runs-api-openapi.yml",
+    "superglue-tools-api-openapi.yml",
+    "superglue-webhooks-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/superglue-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "superglue-openapi.yml: upgraded openapi 3.0.0 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+4 apis, 4 total)"
+  ],
+  "skipped": []
+}

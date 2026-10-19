@@ -1,0 +1,507 @@
+openapi: 3.2.0
+info:
+  title: superglue Connections API
+  version: 1.1.0
+  description: Manage tools, execute runs, receive webhooks, and retrieve run outputs.
+  contact:
+    name: superglue AI Support
+    email: hi@superglue.ai
+servers:
+- url: https://api.superglue.cloud/v1
+  description: superglue Cloud
+security:
+- ApiKeyAuth: []
+tags:
+- name: Connections
+  description: Configure identities and reusable OAuth apps.
+paths:
+  /connections:
+    get:
+      summary: List accessible connections
+      operationId: listConnections
+      tags:
+      - Connections
+      parameters:
+      - in: query
+        name: systemId
+        schema:
+          type: string
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 1000
+      responses:
+        '200':
+          description: Connections the caller can use
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - total
+                - hasMore
+                - page
+                - limit
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Connection'
+                  total:
+                    type: integer
+                  hasMore:
+                    type: boolean
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+    post:
+      summary: Create a connection
+      description: Inline OAuth configuration publishes a reusable organization app during creation. App selection copies configuration into the connection. App secrets are never returned.
+      operationId: createConnection
+      tags:
+      - Connections
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionWrite'
+      responses:
+        '200':
+          description: Connection created
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Connection'
+  /connections/{connectionId}:
+    parameters:
+    - in: path
+      name: connectionId
+      required: true
+      schema:
+        type: string
+    patch:
+      summary: Update a connection
+      operationId: updateConnection
+      tags:
+      - Connections
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ConnectionUpdate'
+      responses:
+        '200':
+          description: Updated connection
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Connection'
+    put:
+      summary: Replace all connection secrets
+      operationId: replaceConnection
+      tags:
+      - Connections
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+              - credentials
+              properties:
+                credentials:
+                  type: object
+                  properties: {}
+                  additionalProperties:
+                    type: string
+      responses:
+        '200':
+          description: Connection with replaced secrets
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Connection'
+    delete:
+      summary: Delete a connection
+      operationId: deleteConnection
+      tags:
+      - Connections
+      responses:
+        '200':
+          description: Connection deleted
+  /connections/{connectionId}/default:
+    post:
+      summary: Select the caller's default connection
+      operationId: setDefaultConnection
+      tags:
+      - Connections
+      parameters:
+      - in: path
+        name: connectionId
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Default connection selected
+  /oauth-apps:
+    get:
+      summary: List reusable OAuth apps
+      description: Organization apps and configured superglue apps are available organization-wide. Secrets are excluded.
+      operationId: listOAuthApps
+      tags:
+      - Connections
+      parameters:
+      - in: query
+        name: systemId
+        schema:
+          type: string
+      - in: query
+        name: page
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - in: query
+        name: limit
+        schema:
+          type: integer
+          minimum: 1
+          maximum: 1000
+          default: 1000
+      responses:
+        '200':
+          description: Reusable OAuth app catalog
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - total
+                - hasMore
+                - page
+                - limit
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/OAuthApp'
+                  total:
+                    type: integer
+                  hasMore:
+                    type: boolean
+                  page:
+                    type: integer
+                  limit:
+                    type: integer
+  /oauth-apps/{appId}:
+    put:
+      summary: Update an organization OAuth app
+      description: Requires the app creator or an administrator. Changes affect future selections; existing connection configurations remain unchanged.
+      operationId: updateOAuthApp
+      tags:
+      - Connections
+      parameters:
+      - in: path
+        name: appId
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                authentication:
+                  $ref: '#/components/schemas/ConnectionAuthentication'
+      responses:
+        '200':
+          description: Updated OAuth app with secrets excluded
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    $ref: '#/components/schemas/OAuthApp'
+components:
+  schemas:
+    ConnectionAuthentication:
+      type: object
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          enum:
+          - none
+          - api_key
+          - basic_auth
+          - oauth2
+          - connection_string
+        oauthClientMode:
+          type: string
+          enum:
+          - managed
+          - dynamic
+          - custom
+        grantType:
+          type: string
+          enum:
+          - authorization_code
+          - client_credentials
+          - password
+          - service_account
+          - custom
+        clientId:
+          type: string
+        clientSecret:
+          type: string
+          writeOnly: true
+        authUrl:
+          type: string
+        tokenUrl:
+          type: string
+        scopes:
+          type: array
+          items:
+            type: string
+        protocol:
+          type: string
+        config:
+          type: object
+          properties: {}
+          additionalProperties: true
+    OAuthApp:
+      type: object
+      required:
+      - id
+      - name
+      - systemId
+      - source
+      - authentication
+      - hasClientSecret
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        systemId:
+          type: string
+        source:
+          type: string
+          enum:
+          - superglue
+          - organization
+        authentication:
+          $ref: '#/components/schemas/ConnectionAuthentication'
+        hasClientSecret:
+          type: boolean
+        createdByUserId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    ConnectionWrite:
+      type: object
+      required:
+      - systemId
+      anyOf:
+      - required:
+        - authentication
+      - required:
+        - oauthAppId
+      properties:
+        systemId:
+          type: string
+          description: Connection namespace used in placeholders and tool steps.
+        name:
+          type: string
+        url:
+          type: string
+        authentication:
+          $ref: '#/components/schemas/ConnectionAuthentication'
+        oauthAppId:
+          type: string
+          writeOnly: true
+          description: Copies app configuration server-side before applying explicit authentication fields.
+        credentials:
+          type: object
+          properties: {}
+          additionalProperties: true
+          writeOnly: true
+        makeDefault:
+          type: boolean
+        tunnel:
+          type:
+          - object
+          - 'null'
+          properties:
+            tunnelId:
+              type: string
+        usageInstructions:
+          type: string
+    ConnectionUpdate:
+      type: object
+      properties:
+        expectedSystemId:
+          type: string
+        systemId:
+          type: string
+        name:
+          type: string
+        url:
+          type:
+          - string
+          - 'null'
+        authentication:
+          $ref: '#/components/schemas/ConnectionAuthentication'
+        authenticationPatch:
+          type: object
+          properties: {}
+          additionalProperties: true
+        oauthAppId:
+          type: string
+          writeOnly: true
+          description: Copies app configuration server-side before applying explicit authentication fields.
+        credentials:
+          type: object
+          properties: {}
+          additionalProperties: true
+          writeOnly: true
+        removeSecretNames:
+          type: array
+          items:
+            type: string
+        tunnel:
+          type:
+          - object
+          - 'null'
+          properties:
+            tunnelId:
+              type: string
+        usageInstructions:
+          type:
+          - string
+          - 'null'
+    Connection:
+      type: object
+      required:
+      - id
+      - name
+      - systemId
+      - userId
+      - authentication
+      - credentialKeys
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        systemId:
+          type: string
+        userId:
+          type: string
+        url:
+          type: string
+        authentication:
+          $ref: '#/components/schemas/ConnectionAuthentication'
+        matchingOAuthAppId:
+          type: string
+          readOnly: true
+          description: App whose client ID and secret match the stored configuration.
+        credentialKeys:
+          type: array
+          items:
+            type: object
+            required:
+            - key
+            - hasValue
+            properties:
+              key:
+                type: string
+              hasValue:
+                type: boolean
+        isDefault:
+          type: boolean
+        isOwner:
+          type: boolean
+        permission:
+          type: string
+          enum:
+          - viewer
+          - editor
+        tunnel:
+          type: object
+          properties:
+            tunnelId:
+              type: string
+        usageInstructions:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Static API Key
+      description: 'Send a superglue API key in the Authorization header:
+
+        `Authorization: Bearer YOUR_API_KEY`.
+
+
+        Create and manage API keys from **API Keys** in the organization menu.
+
+        '
+    WebhookTokenAuth:
+      type: apiKey
+      in: query
+      name: token
+      description: 'Query-string authentication for webhook providers that cannot set an Authorization header.
+
+        The complete webhook URL contains a secret and must be protected accordingly.
+
+        '

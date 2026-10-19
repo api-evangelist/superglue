@@ -1,42 +1,29 @@
 aid: superglue
-
 name: Index Commerce
-
 image: https://superglue.ai/logos/sg_logo.png
-
 description: Index Commerce provides a comprehensive e‑commerce platform that enables brands and retailers to create, manage, and scale online
   storefronts. The solution offers a suite of tools for product catalog management, checkout optimization, inventory synchronization, and analytics,
   helping merchants deliver seamless shopping experiences across web, mobile, and marketplace channels. Index Commerce focuses on flexibility,
   integration capabilities, and performance, supporting businesses from startups to enterprise-level operations.
-
 url: https://raw.githubusercontent.com/api-evangelist/superglue/refs/heads/main/apis.yml
-
 x-type: company
-
 x-source: harvest:g2-catalog
-
 x-tier: profiled
 x-tier-reason: enrichment pass 2026-10-19 (modular-v1; was harvest)
-
 specificationVersion: '0.20'
-
 created: '2026-10-18'
-
 modified: '2026-10-18'
-
 tags:
 - Company
 - e-commerce
 - platform
 - storefront
 - analytics
-
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
-
 common:
 - type: AgenticAccess
   url: agentic-access/superglue-agentic-access.yml
@@ -86,16 +73,95 @@ common:
   url: https://superglue.ai/terms/
 - type: PrivacyPolicy
   url: https://superglue.ai/privacy/
-
 apis:
-- name: superglue API
-  description: Manage tools, execute runs, receive webhooks, and retrieve run outputs.
+- aid: superglue:superglue-connections-api
+  name: Index Commerce Connections API
+  description: Configure identities and reusable OAuth apps.
   humanURL: https://superglue.ai/docs/getting-started/introduction/
   baseURL: https://api.superglue.cloud/v1
+  tags:
+  - Connections
   properties:
   - type: OpenAPI
-    url: openapi/superglue-openapi.yml
-  aid: superglue:superglue-api
+    url: openapi/superglue-connections-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/superglue-run-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-tool-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-create-tool-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-update-tool-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-connection-schema.json
+- aid: superglue:superglue-runs-api
+  name: Index Commerce Runs API
+  description: Inspect execution state and retrieve run outputs.
+  humanURL: https://superglue.ai/docs/getting-started/introduction/
+  baseURL: https://api.superglue.cloud/v1
+  tags:
+  - Runs
+  properties:
+  - type: OpenAPI
+    url: openapi/superglue-runs-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/superglue-run-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-tool-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-create-tool-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-update-tool-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-connection-schema.json
+- aid: superglue:superglue-tools-api
+  name: Index Commerce Tools API
+  description: Create, inspect, update, and execute saved tools.
+  humanURL: https://superglue.ai/docs/getting-started/introduction/
+  baseURL: https://api.superglue.cloud/v1
+  tags:
+  - Tools
+  properties:
+  - type: OpenAPI
+    url: openapi/superglue-tools-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/superglue-run-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-tool-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-create-tool-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-update-tool-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-connection-schema.json
+- aid: superglue:superglue-webhooks-api
+  name: Index Commerce Webhooks API
+  description: Verify webhook subscriptions and trigger tools from incoming events.
+  humanURL: https://superglue.ai/docs/getting-started/introduction/
+  baseURL: https://api.superglue.cloud/v1
+  tags:
+  - Webhooks
+  properties:
+  - type: OpenAPI
+    url: openapi/superglue-webhooks-api-openapi.yml
+  - type: JSONSchema
+    url: json-schema/superglue-run-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-run-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-tool-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-create-tool-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-update-tool-request-schema.json
+  - type: JSONSchema
+    url: json-schema/superglue-connection-schema.json
 x-enrichment:
   date: '2026-10-19'
   status: enriched

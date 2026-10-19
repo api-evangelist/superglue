@@ -1,0 +1,1124 @@
+openapi: 3.2.0
+info:
+  title: superglue Runs API
+  version: 1.1.0
+  description: Manage tools, execute runs, receive webhooks, and retrieve run outputs.
+  contact:
+    name: superglue AI Support
+    email: hi@superglue.ai
+servers:
+- url: https://api.superglue.cloud/v1
+  description: superglue Cloud
+security:
+- ApiKeyAuth: []
+tags:
+- name: Runs
+  description: Inspect execution state and retrieve run outputs.
+paths:
+  /runs/{runId}:
+    get:
+      summary: Get run status and metadata
+      operationId: getRun
+      x-codeSamples:
+      - lang: cURL
+        label: cURL
+        source: "curl \"https://api.superglue.cloud/v1/runs/7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\"\n"
+      - lang: JavaScript
+        label: '@superglue/client'
+        source: 'import { configure, getRun } from "@superglue/client";
+
+
+          configure({ apiKey: "YOUR_API_KEY", baseUrl: "https://api.superglue.cloud/v1" });
+
+
+          const { data: run } = await getRun("7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b");
+
+          console.log(run.status);
+
+          '
+      - lang: Python
+        label: superglue_client
+        source: 'from superglue_client import SuperglueClient
+
+          from superglue_client.api.runs import get_run
+
+
+          client = SuperglueClient(base_url="https://api.superglue.cloud/v1", token="YOUR_API_KEY")
+
+
+          run = get_run.sync("7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b", client=client)
+
+          print(run)
+
+          '
+      tags:
+      - Runs
+      description: 'Returns run status, metadata, and result data. Result data may be truncated for large results.
+
+        Use GET /runs/{runId}/results when `resultStorageUri` indicates separately stored results.'
+      parameters:
+      - name: runId
+        in: path
+        required: true
+        schema:
+          type: string
+        example: 7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b
+      responses:
+        '200':
+          description: Run details
+          headers:
+            X-Trace-Id:
+              schema:
+                type: string
+              description: Request trace ID for debugging and log correlation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Run'
+        '404':
+          description: Run not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized to read this run
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /runs/{runId}/cancel:
+    post:
+      summary: Cancel a run
+      operationId: cancelRun
+      x-codeSamples:
+      - lang: cURL
+        label: cURL
+        source: "curl -X POST \"https://api.superglue.cloud/v1/runs/7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b/cancel\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\"\n"
+      - lang: JavaScript
+        label: '@superglue/client'
+        source: 'import { configure, cancelRun } from "@superglue/client";
+
+
+          configure({ apiKey: "YOUR_API_KEY", baseUrl: "https://api.superglue.cloud/v1" });
+
+
+          const { data: run } = await cancelRun("7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b");
+
+          console.log(run.status);
+
+          '
+      - lang: Python
+        label: superglue_client
+        source: 'from superglue_client import SuperglueClient
+
+          from superglue_client.api.runs import cancel_run
+
+
+          client = SuperglueClient(base_url="https://api.superglue.cloud/v1", token="YOUR_API_KEY")
+
+
+          run = cancel_run.sync("7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b", client=client)
+
+          print(run)
+
+          '
+      tags:
+      - Runs
+      parameters:
+      - name: runId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Run cancelled
+          headers:
+            X-Trace-Id:
+              schema:
+                type: string
+              description: Request trace ID for debugging and log correlation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Run'
+        '400':
+          description: Cannot cancel run
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized to cancel this run
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Run not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /runs/{runId}/results:
+    get:
+      summary: Get full run results
+      operationId: getRunResults
+      x-codeSamples:
+      - lang: cURL
+        label: cURL
+        source: "curl \"https://api.superglue.cloud/v1/runs/7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b/results?truncate=false\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\"\n"
+      - lang: JavaScript
+        label: '@superglue/client'
+        source: "import { configure, getRunResults } from \"@superglue/client\";\n\nconfigure({ apiKey: \"YOUR_API_KEY\", baseUrl: \"https://api.superglue.cloud/v1\" });\n\nconst { data } = await getRunResults(\"7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b\", {\n  truncate: \"false\",\n});\nconsole.log(data.data);\n"
+      - lang: Python
+        label: superglue_client
+        source: "from superglue_client import SuperglueClient\nfrom superglue_client.api.runs import get_run_results\nfrom superglue_client.models import GetRunResultsTruncate\n\nclient = SuperglueClient(base_url=\"https://api.superglue.cloud/v1\", token=\"YOUR_API_KEY\")\n\nresult = get_run_results.sync(\n    \"7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b\",\n    client=client,\n    truncate=GetRunResultsTruncate.FALSE,\n)\nprint(result)\n"
+      tags:
+      - Runs
+      description: 'Fetch separately stored run results. File storage must be configured or the endpoint returns 503.
+
+        If the run has no stored result, the response succeeds with `data: null` and a message.'
+      parameters:
+      - name: runId
+        in: path
+        required: true
+        schema:
+          type: string
+        example: 7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b
+      - name: truncate
+        in: query
+        required: false
+        schema:
+          type: string
+          enum:
+          - 'true'
+          - 'false'
+          default: 'false'
+        description: If "true", truncate large results for preview
+      responses:
+        '200':
+          description: Run results
+          headers:
+            X-Trace-Id:
+              schema:
+                type: string
+              description: Request trace ID for debugging and log correlation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  data:
+                    allOf:
+                    - $ref: '#/components/schemas/RunResults'
+                  message:
+                    type: string
+                    description: Present when no stored results are available
+        '404':
+          description: Run not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized to read this run
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Run result storage not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /runs/{runId}/files:
+    get:
+      summary: List file artifacts for a run
+      operationId: listRunFiles
+      x-codeSamples:
+      - lang: cURL
+        label: cURL
+        source: "curl \"https://api.superglue.cloud/v1/runs/7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b/files\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\"\n"
+      tags:
+      - Runs
+      description: 'List all files promoted as downloadable output artifacts by the run,
+
+        with fresh presigned download URLs (1 hour TTL).'
+      parameters:
+      - name: runId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: File artifacts list
+          headers:
+            X-Trace-Id:
+              schema:
+                type: string
+              description: Request trace ID for debugging and log correlation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  fileArtifacts:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/FileArtifact'
+        '404':
+          description: Run not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized to read this run
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: File storage not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /runs/{runId}/files/{fileKey}/download:
+    get:
+      summary: Get download URL for a file artifact
+      operationId: getRunFileDownload
+      x-codeSamples:
+      - lang: cURL
+        label: cURL
+        source: "curl \"https://api.superglue.cloud/v1/runs/7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b/files/report/download\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\"\n"
+      tags:
+      - Runs
+      description: 'Get a fresh presigned download URL for a specific file artifact.
+
+        Use this to refresh expired URLs.'
+      parameters:
+      - name: runId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: fileKey
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Download URL
+          headers:
+            X-Trace-Id:
+              schema:
+                type: string
+              description: Request trace ID for debugging and log correlation
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  fileKey:
+                    type: string
+                  filename:
+                    type: string
+                  contentType:
+                    type: string
+                  size:
+                    type: integer
+                  downloadUrl:
+                    type: string
+                    format: uri
+                  expiresIn:
+                    type: integer
+                    description: URL validity in seconds
+                    example: 3600
+        '404':
+          description: Run or file artifact not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized to read this run
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: File storage not configured
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /runs:
+    get:
+      summary: List runs
+      operationId: listRuns
+      x-codeSamples:
+      - lang: cURL
+        label: cURL
+        source: "curl \"https://api.superglue.cloud/v1/runs?page=1&limit=50&status=success\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\"\n"
+      - lang: JavaScript
+        label: '@superglue/client'
+        source: 'import { configure, listRuns } from "@superglue/client";
+
+
+          configure({ apiKey: "YOUR_API_KEY", baseUrl: "https://api.superglue.cloud/v1" });
+
+
+          const { data } = await listRuns({ page: 1, limit: 50, status: "success" });
+
+          console.log(data.data);
+
+          '
+      - lang: Python
+        label: superglue_client
+        source: 'from superglue_client import SuperglueClient
+
+          from superglue_client.api.runs import list_runs
+
+          from superglue_client.models import ListRunsStatus
+
+
+          client = SuperglueClient(base_url="https://api.superglue.cloud/v1", token="YOUR_API_KEY")
+
+
+          result = list_runs.sync(client=client, page=1, limit=50, status=ListRunsStatus.SUCCESS)
+
+          print(result)
+
+          '
+      tags:
+      - Runs
+      parameters:
+      - name: toolId
+        in: query
+        description: Filter by saved tool ID.
+        schema:
+          type: string
+      - name: search
+        in: query
+        description: Search run IDs, tool IDs and names, user IDs, and errors.
+        schema:
+          type: string
+          maxLength: 200
+      - name: searchUserIds
+        in: query
+        description: Add exact user ID matches to `search`. Only applied when `search` is present.
+        schema:
+          type: string
+      - name: startedAfter
+        in: query
+        description: Return runs that started after this UTC timestamp.
+        schema:
+          type: string
+          format: date-time
+      - name: status
+        in: query
+        schema:
+          type: string
+          enum:
+          - running
+          - success
+          - failed
+          - aborted
+      - name: requestSources
+        in: query
+        description: Filter by request sources (comma-separated for multiple values)
+        schema:
+          type: string
+        example: api,webhook
+      - name: executionKinds
+        in: query
+        description: Filter by comma-separated execution kinds.
+        schema:
+          type: string
+        example: full,draft
+      - name: userId
+        in: query
+        description: Filter runs by user ID
+        schema:
+          type: string
+      - name: systemId
+        in: query
+        description: Filter runs by system ID
+        schema:
+          type: string
+      - name: includeTotal
+        in: query
+        description: Set to false to skip the exact total count and return a lower-bound total instead.
+        schema:
+          type: boolean
+          default: true
+      - name: page
+        in: query
+        description: Page number, starting at 1.
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: limit
+        in: query
+        description: Number of runs to return per page.
+        schema:
+          type: integer
+          default: 1000
+          minimum: 1
+          maximum: 1000
+      responses:
+        '200':
+          description: List of runs
+          headers:
+            X-Trace-Id:
+              schema:
+                type: string
+              description: Request trace ID for debugging and log correlation
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                - page
+                - limit
+                - total
+                - hasMore
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Run'
+                  page:
+                    type: integer
+                    example: 1
+                  limit:
+                    type: integer
+                    example: 50
+                  total:
+                    type: integer
+                    description: Exact total unless `includeTotal=false`, in which case this is a lower bound.
+                    example: 327
+                  hasMore:
+                    type: boolean
+                    example: true
+        '400':
+          description: Invalid list query parameters
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '503':
+          description: Run search exceeded the database statement timeout
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    HttpResponseMetadata:
+      type: object
+      description: Response metadata for an HTTP request step. Header names are lowercase; `set-cookie` values are arrays.
+      required:
+      - statusCode
+      - headers
+      properties:
+        statusCode:
+          type: integer
+          description: HTTP response status code
+          example: 200
+        headers:
+          type: object
+          description: Response headers keyed by lowercase name
+          additionalProperties:
+            oneOf:
+            - type: string
+            - type: array
+              items:
+                type: string
+        omittedHeaderCount:
+          type: integer
+          description: Number of headers omitted from a size-bounded view
+    FileArtifact:
+      type: object
+      description: A file promoted as downloadable output by a tool step.
+      required:
+      - fileKey
+      - filename
+      - contentType
+      - size
+      properties:
+        fileKey:
+          type: string
+          description: Unique key identifying this file within the run
+          example: report
+        filename:
+          type: string
+          description: Original filename
+          example: monthly_report.csv
+        contentType:
+          type: string
+          description: MIME type of the file
+          example: text/csv
+        size:
+          type: integer
+          description: File size in bytes
+          example: 52480
+        downloadUrl:
+          type: string
+          format: uri
+          description: Pre-signed download URL, valid for 1 hour. Included in single-run and file-specific endpoints, omitted in list responses.
+          example: https://s3.amazonaws.com/bucket/org/run-files/runId/report.csv?X-Amz-Expires=3600
+    Pagination:
+      type: object
+      description: Pagination configuration (HTTP/HTTPS only, not applicable to Postgres/FTP)
+      required:
+      - type
+      properties:
+        type:
+          type: string
+          enum:
+          - offsetBased
+          - pageBased
+          - cursorBased
+          - disabled
+          example: cursorBased
+        pageSize:
+          type: string
+          description: Number of items per page. Becomes available as <<(sourceData) => sourceData.limit>> in request templates.
+          example: '50'
+        cursorPath:
+          type: string
+          description: JSONPath to extract next page cursor from response body (e.g. "meta.next_cursor" for {meta:{next_cursor:"abc"}})
+          example: meta.next_cursor
+        stopCondition:
+          type: string
+          description: 'JavaScript function to determine when to stop pagination. Format: (response, pageInfo, sourceData) => boolean
+
+            - response: Object with {data: ..., headers: ...} - access response body via response.data
+
+            - pageInfo: Object with {page: number, offset: number, cursor: any, totalFetched: number, mergedResult: any}
+
+            - pageInfo.totalFetched counts the merged paginated result including the current page
+
+            - pageInfo.mergedResult contains the accumulated paginated result including the current page
+
+            - sourceData: Current step input data with payload fields at the root plus previous step results
+
+            - Return true to STOP pagination, false to continue
+
+            '
+          example: (response, pageInfo, sourceData) => !response.data.pagination.has_more || pageInfo.totalFetched >= sourceData.maxResults
+    Tool:
+      type: object
+      description: A saved integration tool containing request and transformation steps.
+      required:
+      - id
+      - steps
+      properties:
+        id:
+          type: string
+          example: 550e8400-e29b-41d4-a716-446655440000
+        name:
+          type: string
+          example: Web Search
+        version:
+          type: string
+          description: Semantic version string (major.minor.patch)
+          example: 2.1.0
+          pattern: ^\d+\.\d+\.\d+$
+        instruction:
+          type: string
+          description: Human-readable instruction describing what the tool does
+          example: Search the web for the given query and return relevant results
+        inputSchema:
+          type: object
+          description: JSON Schema for tool inputs
+          example:
+            type: object
+            properties:
+              query:
+                type: string
+              maxResults:
+                type: integer
+                default: 10
+            required:
+            - query
+        outputSchema:
+          type: object
+          description: JSON Schema for tool outputs (after transformations applied)
+        steps:
+          type: array
+          description: Ordered execution steps. May be empty when `outputTransform` is present.
+          items:
+            $ref: '#/components/schemas/ToolStep'
+        outputTransform:
+          type: string
+          description: 'JavaScript function for final output transformation.
+
+            Format: (sourceData) => expression
+
+            '
+          example: '(sourceData) => sourceData.map(item => ({ id: item.id, title: item.name }))'
+        folder:
+          type: string
+          description: Folder path for organizing tools
+          example: integrations/payments
+        archived:
+          type: boolean
+          description: Whether this tool is archived (if so, it will not be listed in the UI and cannot be run)
+          default: false
+        createdByUserId:
+          type: string
+          description: ID of the user who created the tool.
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        lastUsedAt:
+          type: string
+          format: date-time
+    RunResults:
+      type: object
+      description: Full (non-truncated) run results fetched from storage
+      required:
+      - runId
+      - success
+      - stepResults
+      - toolPayload
+      - storedAt
+      properties:
+        runId:
+          type: string
+          example: 7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b
+        success:
+          type: boolean
+        data:
+          description: Full tool execution result data
+          allOf:
+          - $ref: '#/components/schemas/AnyValue'
+        stepResults:
+          type: array
+          description: Per-step execution results
+          items:
+            $ref: '#/components/schemas/StepResult'
+        toolPayload:
+          type: object
+          description: The inputs provided when running the tool
+          additionalProperties: true
+        error:
+          type: string
+        storedAt:
+          type: string
+          format: date-time
+        fileArtifacts:
+          type: array
+          items:
+            $ref: '#/components/schemas/FileArtifact'
+    ToolStep:
+      type: object
+      description: 'A single execution step containing either a request configuration (API call)
+
+        or a transform configuration (data transformation).
+
+        '
+      required:
+      - id
+      - config
+      properties:
+        id:
+          type: string
+          description: Unique identifier for this step
+          example: 1a2b3c4d-5e6f-7a8b-9c0d-1e2f3a4b5c6d
+        config:
+          $ref: '#/components/schemas/StepConfig'
+        instruction:
+          type: string
+          description: Human-readable instruction describing what this step does
+          example: Fetch user details from the API
+        modify:
+          type: boolean
+          description: Whether this step modifies data on the system it operates on
+          default: false
+        dataSelector:
+          type: string
+          description: 'JavaScript function to select data for loop execution.
+
+            Format: (sourceData) => expression
+
+            '
+          example: (sourceData) => sourceData.data.items
+        failureBehavior:
+          type: string
+          enum:
+          - fail
+          - continue
+          description: How to handle step failures (fail stops execution, continue proceeds to next step)
+          default: fail
+        outputFile:
+          type: boolean
+          default: false
+          description: Promote files produced by this step as downloadable run artifacts.
+    Run:
+      type: object
+      required:
+      - runId
+      - toolId
+      - status
+      - metadata
+      properties:
+        runId:
+          type: string
+          description: Unique identifier for this run
+          example: 7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b
+        toolId:
+          type: string
+          description: ID of the tool that was executed
+          example: 550e8400-e29b-41d4-a716-446655440000
+        tool:
+          $ref: '#/components/schemas/Tool'
+          description: Full tool configuration that was executed
+        systemIds:
+          type: array
+          description: Systems used by the run.
+          items:
+            type: string
+        status:
+          type: string
+          enum:
+          - running
+          - success
+          - failed
+          - aborted
+          description: 'Execution status:
+
+            - running: Execution in progress
+
+            - success: Completed successfully
+
+            - failed: Failed due to error
+
+            - aborted: Cancelled by user or system
+
+            '
+          example: success
+        toolPayload:
+          type: object
+          description: The inputs provided when running the tool
+          additionalProperties: true
+        data:
+          description: 'Tool execution result data when available. Large persisted results may be stored separately;
+
+            use GET /runs/{runId}/results when `resultStorageUri` is present.
+
+            '
+          allOf:
+          - $ref: '#/components/schemas/AnyValue'
+        error:
+          type: string
+          description: Error message (only present when status is failed or aborted)
+          example: Connection timeout after 30000 milliseconds
+        stepResults:
+          type: array
+          description: 'Per-step status and error details. A synchronous run response includes step data only
+
+            when `includeStepResultData` is true; stored run records omit step data.
+
+            '
+          items:
+            $ref: '#/components/schemas/StepResult'
+        options:
+          type: object
+          description: Execution options that were used for this run
+          additionalProperties: true
+        requestSource:
+          type: string
+          description: Source identifier for where the run was initiated
+          enum:
+          - api
+          - frontend
+          - agent
+          - scheduler
+          - mcp
+          - tool-chain
+          - webhook
+          - cli
+          example: api
+        traceId:
+          type: string
+          description: Trace ID for this run (for debugging and log correlation)
+          example: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+        resultStorageUri:
+          type: string
+          description: 'Internal storage URI for full results, when separate result storage was used.
+
+            Use GET /runs/{runId}/results to fetch the full data.
+
+            '
+          example: s3://superglue-results/org123/runs/7f3e9c1a.json
+        userId:
+          type: string
+          description: User who triggered this run
+        metadata:
+          type: object
+          required:
+          - startedAt
+          properties:
+            startedAt:
+              type: string
+              format: date-time
+            completedAt:
+              type: string
+              format: date-time
+              description: Only present when run has finished (success, failed, or aborted)
+            durationMs:
+              type: integer
+              example: 5234
+            executionKind:
+              type: string
+              enum:
+              - full
+              - draft
+              - single-step
+              default: full
+            parentToolId:
+              type: string
+              description: Parent saved tool for draft and single-step executions.
+            warnings:
+              type: array
+              items:
+                type: string
+              description: Non-fatal run warnings, e.g. removed reserved inputs, persistent tool state write rejections, or concurrent-run conflicts.
+            clientInfo:
+              type: object
+              properties:
+                name:
+                  type: string
+                version:
+                  type: string
+                userAgent:
+                  type: string
+        fileArtifacts:
+          type: array
+          description: 'Files promoted as downloadable artifacts by the tool run.
+
+            Only present when a step with `outputFile: true` produced file output.
+
+            In list responses, includes metadata only (no downloadUrl).
+
+            In single-run responses (GET /runs/{runId}), includes presigned download URLs (1 hour TTL).
+
+            Use GET /runs/{runId}/files to get fresh download URLs.
+
+            '
+          items:
+            $ref: '#/components/schemas/FileArtifact'
+    TransformStepConfig:
+      type: object
+      description: 'Configuration for a transform step. Transform steps execute JavaScript code
+
+        to reshape data between request steps without making external API calls.
+
+        '
+      required:
+      - type
+      - transformCode
+      properties:
+        type:
+          type: string
+          enum:
+          - transform
+          description: Type discriminator for transform steps
+        transformCode:
+          type: string
+          description: 'JavaScript function that transforms sourceData.
+
+            Format: (sourceData) => transformedData
+
+            The function receives all previous step results and payload data.
+
+            '
+          example: '(sourceData) => sourceData.getUsers.data.map(u => ({ id: u.id, name: u.fullName }))'
+    RequestStepConfig:
+      type: object
+      description: 'Configuration for a request step. Protocol is detected from URL scheme:
+
+        - HTTP/HTTPS: Standard REST API calls with query params, headers, body
+
+        - Postgres: postgres:// or postgresql:// URLs, body contains SQL query
+
+        - FTP/SFTP: ftp://, ftps://, or sftp:// URLs, body contains operation details
+
+        '
+      required:
+      - url
+      properties:
+        type:
+          type: string
+          enum:
+          - request
+          description: Optional type discriminator (defaults to request)
+        url:
+          type: string
+          description: 'Full URL including protocol. Examples:
+
+            - HTTP: https://api.example.com/search
+
+            - Postgres: postgres://user:pass@host:5432/database
+
+            - FTP: ftp://user:pass@host:21/path
+
+            - SFTP: sftp://user:pass@host:22/path
+
+            '
+          example: https://api.example.com/search
+        method:
+          type: string
+          enum:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - PATCH
+          - HEAD
+          - OPTIONS
+          description: HTTP method. Defaults to GET. For non-HTTP protocols, use POST.
+          default: GET
+          example: GET
+        queryParams:
+          type: object
+          description: URL query parameters (HTTP only). Supports template expressions with <<(sourceData) => ...>> syntax.
+          additionalProperties: true
+          example:
+            q: <<(sourceData) => sourceData.query>>
+            limit: 10
+        headers:
+          type: object
+          description: HTTP headers (HTTP only). Supports template expressions with <<(sourceData) => ...>> syntax.
+          additionalProperties: true
+          example:
+            Content-Type: application/json
+            Authorization: Bearer <<(sourceData) => sourceData.credentials.apiKey>>
+        body:
+          type: string
+          description: 'Request body (protocol-specific). Supports template expressions with <<(sourceData) => ...>> syntax.
+
+
+            HTTP: Any content (JSON, XML, form data, etc.)
+
+            Example: ''{"query": "<<(sourceData) => sourceData.query>>"}''
+
+
+            Postgres: JSON with query and optional params
+
+            Example: ''{"query": "SELECT * FROM users WHERE id = $1", "params": ["<<(sourceData) => sourceData.userId>>"]}''
+
+
+            FTP/SFTP: JSON with operation, path, and optional content
+
+            Example: ''{"operation": "get", "path": "/data/file.csv"}''
+
+            Example: ''{"operation": "list", "path": "/data"}''
+
+            Example: ''{"operation": "put", "path": "/data/file.txt", "content": "<<(sourceData) => sourceData.fileContent>>"}''
+
+            '
+          example: '{"query": "<<(sourceData) => sourceData.query>>"}'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+        systemId:
+          type: string
+          description: Connection namespace used to resolve credentials
+          example: 3f7c8d9e-1a2b-4c5d-8e9f-0a1b2c3d4e5f
+        captureHttpResponse:
+          type: boolean
+          description: HTTP only. When true, the step envelope and step result include `http` with the response status code and lowercase headers. Defaults to false.
+          default: false
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          required:
+          - message
+          properties:
+            message:
+              type: string
+              example: Invalid input parameters
+    StepConfig:
+      oneOf:
+      - $ref: '#/components/schemas/RequestStepConfig'
+      - $ref: '#/components/schemas/TransformStepConfig'
+      discriminator:
+        propertyName: type
+        mapping:
+          request: '#/components/schemas/RequestStepConfig'
+          transform: '#/components/schemas/TransformStepConfig'
+    StepResult:
+      type: object
+      description: Execution result for a single tool step
+      required:
+      - stepId
+      - success
+      properties:
+        stepId:
+          type: string
+          description: ID of the step that was executed
+        success:
+          type: boolean
+          description: Whether the step completed successfully
+        data:
+          description: Step result data
+          allOf:
+          - $ref: '#/components/schemas/AnyValue'
+        error:
+          type: string
+          description: Error message if the step failed
+        stepFileKeys:
+          type: array
+          description: File keys produced by this step.
+          items:
+            type: string
+        http:
+          description: HTTP response metadata. Present only for HTTP request steps with `captureHttpResponse` enabled.
+          allOf:
+          - $ref: '#/components/schemas/HttpResponseMetadata'
+    AnyValue:
+      description: Any valid JSON value.
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Static API Key
+      description: 'Send a superglue API key in the Authorization header:
+
+        `Authorization: Bearer YOUR_API_KEY`.
+
+
+        Create and manage API keys from **API Keys** in the organization menu.
+
+        '
+    WebhookTokenAuth:
+      type: apiKey
+      in: query
+      name: token
+      description: 'Query-string authentication for webhook providers that cannot set an Authorization header.
+
+        The complete webhook URL contains a secret and must be protected accordingly.
+
+        '

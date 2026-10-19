@@ -36,6 +36,7 @@ hosts:
   - probed
   - contract-discovery
   - well-known
+  - vendor-detect
   types:
   - Website
   - Documentation
@@ -47,6 +48,8 @@ hosts:
   - PrivacyPolicy
   serves:
   - docs
+  - cdn
+  vendor: cloudfront
   registrable_domain: superglue.ai
   role: website
   relation: own

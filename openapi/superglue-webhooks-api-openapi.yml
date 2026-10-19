@@ -1,0 +1,247 @@
+openapi: 3.2.0
+info:
+  title: superglue Webhooks API
+  version: 1.1.0
+  description: Manage tools, execute runs, receive webhooks, and retrieve run outputs.
+  contact:
+    name: superglue AI Support
+    email: hi@superglue.ai
+servers:
+- url: https://api.superglue.cloud/v1
+  description: superglue Cloud
+security:
+- ApiKeyAuth: []
+tags:
+- name: Webhooks
+  description: Verify webhook subscriptions and trigger tools from incoming events.
+paths:
+  /hooks/{toolId}:
+    get:
+      summary: Handle webhook challenge verification
+      operationId: verifyWebhook
+      security:
+      - ApiKeyAuth: []
+      - WebhookTokenAuth: []
+      x-codeSamples:
+      - lang: cURL
+        label: cURL
+        source: "curl \"https://api.superglue.cloud/v1/hooks/handle-stripe-webhook?hub.mode=subscribe&hub.challenge=CHALLENGE_TOKEN\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\"\n"
+      tags:
+      - Webhooks
+      description: 'Handle webhook challenge/verification requests from external services.
+
+        GET requests are only supported for challenge verification (not tool execution).
+
+
+        Supported challenge patterns:
+
+        - **Meta/Facebook/WhatsApp:** `?hub.mode=subscribe&hub.challenge=...` → echoes challenge as plain text
+
+        - **Microsoft Graph:** `?validationToken=...` → echoes token as plain text
+
+        - **Nylas/generic:** `?challenge=...` → echoes challenge as plain text'
+      parameters:
+      - name: toolId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the tool to verify webhook for
+        example: handle-stripe-webhook
+      - name: hub.mode
+        in: query
+        description: Meta verification mode. Use `subscribe` with `hub.challenge`.
+        schema:
+          type: string
+        example: subscribe
+      - name: hub.challenge
+        in: query
+        description: Meta challenge value to echo as plain text.
+        schema:
+          type: string
+      - name: validationToken
+        in: query
+        description: Microsoft Graph token to echo as plain text.
+        schema:
+          type: string
+      - name: challenge
+        in: query
+        description: Generic challenge value to echo as plain text.
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Challenge response echoed back to the requesting service
+          content:
+            text/plain:
+              schema:
+                type: string
+        '405':
+          description: GET requests are only supported for webhook challenge verification
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized to execute this tool
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Tool not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    post:
+      summary: Handle incoming webhook
+      operationId: triggerWebhook
+      security:
+      - ApiKeyAuth: []
+      - WebhookTokenAuth: []
+      x-codeSamples:
+      - lang: cURL
+        label: cURL
+        source: "curl -X POST \"https://api.superglue.cloud/v1/hooks/handle-stripe-webhook\" \\\n  -H \"Authorization: Bearer YOUR_API_KEY\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"id\": \"evt_1234\",\n    \"type\": \"customer.created\",\n    \"data\": { \"object\": { \"id\": \"cus_abc123\", \"email\": \"user@example.com\" } }\n  }'\n"
+      - lang: JavaScript
+        label: '@superglue/client'
+        source: "import { configure, triggerWebhook } from \"@superglue/client\";\n\nconfigure({ apiKey: \"YOUR_API_KEY\", baseUrl: \"https://api.superglue.cloud/v1\" });\n\nconst { data } = await triggerWebhook(\n  \"handle-stripe-webhook\",\n  {\n    id: \"evt_1234\",\n    type: \"customer.created\",\n    data: { object: { id: \"cus_abc123\", email: \"user@example.com\" } },\n  },\n);\nconsole.log(data.runId);\n"
+      - lang: Python
+        label: superglue_client
+        source: "from superglue_client import SuperglueClient\nfrom superglue_client.api.webhooks import trigger_webhook\nfrom superglue_client.models import TriggerWebhookBody\n\nclient = SuperglueClient(base_url=\"https://api.superglue.cloud/v1\", token=\"YOUR_API_KEY\")\n\nresult = trigger_webhook.sync(\n    \"handle-stripe-webhook\",\n    client=client,\n    body=TriggerWebhookBody.from_dict({\n        \"id\": \"evt_1234\",\n        \"type\": \"customer.created\",\n        \"data\": {\"object\": {\"id\": \"cus_abc123\", \"email\": \"user@example.com\"}},\n    }),\n)\nprint(result)\n"
+      tags:
+      - Webhooks
+      description: 'Trigger a tool execution from an external webhook (Stripe, GitHub, etc.).
+
+
+        The request body becomes the tool''s input payload.
+
+        Returns 202 Accepted immediately and executes the tool asynchronously.
+
+
+        Also handles webhook challenge/verification patterns inline:
+
+        - **monday.com, Slack:** POST body `{ challenge: "..." }` → echoes challenge as JSON
+
+        - **Generic:** POST body `{ verification_token: "...", type: "verification" }` → echoes token as JSON
+
+
+        superglue authenticates access to this endpoint, but does not validate provider-specific
+
+        HMAC signatures in the incoming payload.'
+      parameters:
+      - name: toolId
+        in: path
+        required: true
+        schema:
+          type: string
+        description: ID of the tool to trigger
+        example: handle-stripe-webhook
+      requestBody:
+        required: false
+        description: Webhook payload from the external service. Becomes the tool's input.
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: true
+              example:
+                id: evt_1234
+                type: customer.created
+                data:
+                  object:
+                    id: cus_abc123
+                    email: user@example.com
+      responses:
+        '200':
+          description: Challenge response returned for supported POST verification payloads
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: true
+        '202':
+          description: Webhook accepted, tool execution started
+          headers:
+            X-Trace-Id:
+              schema:
+                type: string
+              description: Trace ID for this request
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - runId
+                - status
+                - toolId
+                properties:
+                  runId:
+                    type: string
+                    description: ID of the created run
+                    example: 7f3e9c1a-2b4d-4e8f-9a3b-1c5d7e9f2a4b
+                  status:
+                    type: string
+                    enum:
+                    - accepted
+                    example: accepted
+                  toolId:
+                    type: string
+                    description: ID of the triggered tool
+                    example: handle-stripe-webhook
+        '400':
+          description: Tool is archived
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '404':
+          description: Tool not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '403':
+          description: Not authorized to execute this tool
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Error:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: object
+          required:
+          - message
+          properties:
+            message:
+              type: string
+              example: Invalid input parameters
+  securitySchemes:
+    ApiKeyAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: Static API Key
+      description: 'Send a superglue API key in the Authorization header:
+
+        `Authorization: Bearer YOUR_API_KEY`.
+
+
+        Create and manage API keys from **API Keys** in the organization menu.
+
+        '
+    WebhookTokenAuth:
+      type: apiKey
+      in: query
+      name: token
+      description: 'Query-string authentication for webhook providers that cannot set an Authorization header.
+
+        The complete webhook URL contains a secret and must be protected accordingly.
+
+        '

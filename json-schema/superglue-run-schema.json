@@ -1,0 +1,515 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/superglue/main/json-schema/superglue-run-schema.json",
+  "title": "Run",
+  "x-generated": "2026-10-19",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/superglue-openapi.yml#/components/schemas/Run",
+  "type": "object",
+  "required": [
+    "runId",
+    "toolId",
+    "status",
+    "metadata"
+  ],
+  "properties": {
+    "runId": {
+      "type": "string",
+      "description": "Unique identifier for this run"
+    },
+    "toolId": {
+      "type": "string",
+      "description": "ID of the tool that was executed"
+    },
+    "tool": {
+      "$ref": "#/$defs/Tool",
+      "description": "Full tool configuration that was executed"
+    },
+    "systemIds": {
+      "type": "array",
+      "description": "Systems used by the run.",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "running",
+        "success",
+        "failed",
+        "aborted"
+      ],
+      "description": "Execution status:\n- running: Execution in progress\n- success: Completed successfully\n- failed: Failed due to error\n- aborted: Cancelled by user or system\n"
+    },
+    "toolPayload": {
+      "type": "object",
+      "description": "The inputs provided when running the tool",
+      "additionalProperties": true
+    },
+    "data": {
+      "description": "Tool execution result data when available. Large persisted results may be stored separately;\nuse GET /runs/{runId}/results when `resultStorageUri` is present.\n",
+      "allOf": [
+        {
+          "$ref": "#/$defs/AnyValue"
+        }
+      ]
+    },
+    "error": {
+      "type": "string",
+      "description": "Error message (only present when status is failed or aborted)"
+    },
+    "stepResults": {
+      "type": "array",
+      "description": "Per-step status and error details. A synchronous run response includes step data only\nwhen `includeStepResultData` is true; stored run records omit step data.\n",
+      "items": {
+        "$ref": "#/$defs/StepResult"
+      }
+    },
+    "options": {
+      "type": "object",
+      "description": "Execution options that were used for this run",
+      "additionalProperties": true
+    },
+    "requestSource": {
+      "type": "string",
+      "description": "Source identifier for where the run was initiated",
+      "enum": [
+        "api",
+        "frontend",
+        "agent",
+        "scheduler",
+        "mcp",
+        "tool-chain",
+        "webhook",
+        "cli"
+      ]
+    },
+    "traceId": {
+      "type": "string",
+      "description": "Trace ID for this run (for debugging and log correlation)"
+    },
+    "resultStorageUri": {
+      "type": "string",
+      "description": "Internal storage URI for full results, when separate result storage was used.\nUse GET /runs/{runId}/results to fetch the full data.\n"
+    },
+    "userId": {
+      "type": "string",
+      "description": "User who triggered this run"
+    },
+    "metadata": {
+      "type": "object",
+      "required": [
+        "startedAt"
+      ],
+      "properties": {
+        "startedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "completedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Only present when run has finished (success, failed, or aborted)"
+        },
+        "durationMs": {
+          "type": "integer"
+        },
+        "executionKind": {
+          "type": "string",
+          "enum": [
+            "full",
+            "draft",
+            "single-step"
+          ],
+          "default": "full"
+        },
+        "parentToolId": {
+          "type": "string",
+          "description": "Parent saved tool for draft and single-step executions."
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Non-fatal run warnings, e.g. removed reserved inputs, persistent tool state write rejections, or concurrent-run conflicts."
+        },
+        "clientInfo": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "userAgent": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "fileArtifacts": {
+      "type": "array",
+      "description": "Files promoted as downloadable artifacts by the tool run.\nOnly present when a step with `outputFile: true` produced file output.\nIn list responses, includes metadata only (no downloadUrl).\nIn single-run responses (GET /runs/{runId}), includes presigned download URLs (1 hour TTL).\nUse GET /runs/{runId}/files to get fresh download URLs.\n",
+      "items": {
+        "$ref": "#/$defs/FileArtifact"
+      }
+    }
+  },
+  "$defs": {
+    "AnyValue": {
+      "description": "Any valid JSON value."
+    },
+    "FileArtifact": {
+      "type": "object",
+      "description": "A file promoted as downloadable output by a tool step.",
+      "required": [
+        "fileKey",
+        "filename",
+        "contentType",
+        "size"
+      ],
+      "properties": {
+        "fileKey": {
+          "type": "string",
+          "description": "Unique key identifying this file within the run"
+        },
+        "filename": {
+          "type": "string",
+          "description": "Original filename"
+        },
+        "contentType": {
+          "type": "string",
+          "description": "MIME type of the file"
+        },
+        "size": {
+          "type": "integer",
+          "description": "File size in bytes"
+        },
+        "downloadUrl": {
+          "type": "string",
+          "format": "uri",
+          "description": "Pre-signed download URL, valid for 1 hour. Included in single-run and file-specific endpoints, omitted in list responses."
+        }
+      }
+    },
+    "HttpResponseMetadata": {
+      "type": "object",
+      "description": "Response metadata for an HTTP request step. Header names are lowercase; `set-cookie` values are arrays.",
+      "required": [
+        "statusCode",
+        "headers"
+      ],
+      "properties": {
+        "statusCode": {
+          "type": "integer",
+          "description": "HTTP response status code"
+        },
+        "headers": {
+          "type": "object",
+          "description": "Response headers keyed by lowercase name",
+          "additionalProperties": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ]
+          }
+        },
+        "omittedHeaderCount": {
+          "type": "integer",
+          "description": "Number of headers omitted from a size-bounded view"
+        }
+      }
+    },
+    "Pagination": {
+      "type": "object",
+      "description": "Pagination configuration (HTTP/HTTPS only, not applicable to Postgres/FTP)",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "offsetBased",
+            "pageBased",
+            "cursorBased",
+            "disabled"
+          ]
+        },
+        "pageSize": {
+          "type": "string",
+          "description": "Number of items per page. Becomes available as <<(sourceData) => sourceData.limit>> in request templates."
+        },
+        "cursorPath": {
+          "type": "string",
+          "description": "JSONPath to extract next page cursor from response body (e.g. \"meta.next_cursor\" for {meta:{next_cursor:\"abc\"}})"
+        },
+        "stopCondition": {
+          "type": "string",
+          "description": "JavaScript function to determine when to stop pagination. Format: (response, pageInfo, sourceData) => boolean\n- response: Object with {data: ..., headers: ...} - access response body via response.data\n- pageInfo: Object with {page: number, offset: number, cursor: any, totalFetched: number, mergedResult: any}\n- pageInfo.totalFetched counts the merged paginated result including the current page\n- pageInfo.mergedResult contains the accumulated paginated result including the current page\n- sourceData: Current step input data with payload fields at the root plus previous step results\n- Return true to STOP pagination, false to continue\n"
+        }
+      }
+    },
+    "RequestStepConfig": {
+      "type": "object",
+      "description": "Configuration for a request step. Protocol is detected from URL scheme:\n- HTTP/HTTPS: Standard REST API calls with query params, headers, body\n- Postgres: postgres:// or postgresql:// URLs, body contains SQL query\n- FTP/SFTP: ftp://, ftps://, or sftp:// URLs, body contains operation details\n",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "request"
+          ],
+          "description": "Optional type discriminator (defaults to request)"
+        },
+        "url": {
+          "type": "string",
+          "description": "Full URL including protocol. Examples:\n- HTTP: https://api.example.com/search\n- Postgres: postgres://user:pass@host:5432/database\n- FTP: ftp://user:pass@host:21/path\n- SFTP: sftp://user:pass@host:22/path\n"
+        },
+        "method": {
+          "type": "string",
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "PATCH",
+            "HEAD",
+            "OPTIONS"
+          ],
+          "description": "HTTP method. Defaults to GET. For non-HTTP protocols, use POST.",
+          "default": "GET"
+        },
+        "queryParams": {
+          "type": "object",
+          "description": "URL query parameters (HTTP only). Supports template expressions with <<(sourceData) => ...>> syntax.",
+          "additionalProperties": true
+        },
+        "headers": {
+          "type": "object",
+          "description": "HTTP headers (HTTP only). Supports template expressions with <<(sourceData) => ...>> syntax.",
+          "additionalProperties": true
+        },
+        "body": {
+          "type": "string",
+          "description": "Request body (protocol-specific). Supports template expressions with <<(sourceData) => ...>> syntax.\n\nHTTP: Any content (JSON, XML, form data, etc.)\nExample: '{\"query\": \"<<(sourceData) => sourceData.query>>\"}'\n\nPostgres: JSON with query and optional params\nExample: '{\"query\": \"SELECT * FROM users WHERE id = $1\", \"params\": [\"<<(sourceData) => sourceData.userId>>\"]}'\n\nFTP/SFTP: JSON with operation, path, and optional content\nExample: '{\"operation\": \"get\", \"path\": \"/data/file.csv\"}'\nExample: '{\"operation\": \"list\", \"path\": \"/data\"}'\nExample: '{\"operation\": \"put\", \"path\": \"/data/file.txt\", \"content\": \"<<(sourceData) => sourceData.fileContent>>\"}'\n"
+        },
+        "pagination": {
+          "$ref": "#/$defs/Pagination"
+        },
+        "systemId": {
+          "type": "string",
+          "description": "Connection namespace used to resolve credentials"
+        },
+        "captureHttpResponse": {
+          "type": "boolean",
+          "description": "HTTP only. When true, the step envelope and step result include `http` with the response status code and lowercase headers. Defaults to false.",
+          "default": false
+        }
+      }
+    },
+    "StepConfig": {
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RequestStepConfig"
+        },
+        {
+          "$ref": "#/$defs/TransformStepConfig"
+        }
+      ]
+    },
+    "StepResult": {
+      "type": "object",
+      "description": "Execution result for a single tool step",
+      "required": [
+        "stepId",
+        "success"
+      ],
+      "properties": {
+        "stepId": {
+          "type": "string",
+          "description": "ID of the step that was executed"
+        },
+        "success": {
+          "type": "boolean",
+          "description": "Whether the step completed successfully"
+        },
+        "data": {
+          "description": "Step result data",
+          "allOf": [
+            {
+              "$ref": "#/$defs/AnyValue"
+            }
+          ]
+        },
+        "error": {
+          "type": "string",
+          "description": "Error message if the step failed"
+        },
+        "stepFileKeys": {
+          "type": "array",
+          "description": "File keys produced by this step.",
+          "items": {
+            "type": "string"
+          }
+        },
+        "http": {
+          "description": "HTTP response metadata. Present only for HTTP request steps with `captureHttpResponse` enabled.",
+          "allOf": [
+            {
+              "$ref": "#/$defs/HttpResponseMetadata"
+            }
+          ]
+        }
+      }
+    },
+    "Tool": {
+      "type": "object",
+      "description": "A saved integration tool containing request and transformation steps.",
+      "required": [
+        "id",
+        "steps"
+      ],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string",
+          "description": "Semantic version string (major.minor.patch)",
+          "pattern": "^\\d+\\.\\d+\\.\\d+$"
+        },
+        "instruction": {
+          "type": "string",
+          "description": "Human-readable instruction describing what the tool does"
+        },
+        "inputSchema": {
+          "type": "object",
+          "description": "JSON Schema for tool inputs"
+        },
+        "outputSchema": {
+          "type": "object",
+          "description": "JSON Schema for tool outputs (after transformations applied)"
+        },
+        "steps": {
+          "type": "array",
+          "description": "Ordered execution steps. May be empty when `outputTransform` is present.",
+          "items": {
+            "$ref": "#/$defs/ToolStep"
+          }
+        },
+        "outputTransform": {
+          "type": "string",
+          "description": "JavaScript function for final output transformation.\nFormat: (sourceData) => expression\n"
+        },
+        "folder": {
+          "type": "string",
+          "description": "Folder path for organizing tools"
+        },
+        "archived": {
+          "type": "boolean",
+          "description": "Whether this tool is archived (if so, it will not be listed in the UI and cannot be run)",
+          "default": false
+        },
+        "createdByUserId": {
+          "type": "string",
+          "description": "ID of the user who created the tool."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastUsedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "ToolStep": {
+      "type": "object",
+      "description": "A single execution step containing either a request configuration (API call)\nor a transform configuration (data transformation).\n",
+      "required": [
+        "id",
+        "config"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for this step"
+        },
+        "config": {
+          "$ref": "#/$defs/StepConfig"
+        },
+        "instruction": {
+          "type": "string",
+          "description": "Human-readable instruction describing what this step does"
+        },
+        "modify": {
+          "type": "boolean",
+          "description": "Whether this step modifies data on the system it operates on",
+          "default": false
+        },
+        "dataSelector": {
+          "type": "string",
+          "description": "JavaScript function to select data for loop execution.\nFormat: (sourceData) => expression\n"
+        },
+        "failureBehavior": {
+          "type": "string",
+          "enum": [
+            "fail",
+            "continue"
+          ],
+          "description": "How to handle step failures (fail stops execution, continue proceeds to next step)",
+          "default": "fail"
+        },
+        "outputFile": {
+          "type": "boolean",
+          "default": false,
+          "description": "Promote files produced by this step as downloadable run artifacts."
+        }
+      }
+    },
+    "TransformStepConfig": {
+      "type": "object",
+      "description": "Configuration for a transform step. Transform steps execute JavaScript code\nto reshape data between request steps without making external API calls.\n",
+      "required": [
+        "type",
+        "transformCode"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "transform"
+          ],
+          "description": "Type discriminator for transform steps"
+        },
+        "transformCode": {
+          "type": "string",
+          "description": "JavaScript function that transforms sourceData.\nFormat: (sourceData) => transformedData\nThe function receives all previous step results and payload data.\n"
+        }
+      }
+    }
+  }
+}

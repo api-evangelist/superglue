@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/superglue/main/json-schema/superglue-run-request-schema.json",
+  "title": "RunRequest",
+  "x-generated": "2026-10-19",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/superglue-openapi.yml#/components/schemas/RunRequest",
+  "type": "object",
+  "properties": {
+    "runId": {
+      "type": "string",
+      "description": "Optional pre-generated run ID. If not provided, server generates one.\nUseful for idempotency and tracking runs before they start.\n"
+    },
+    "inputs": {
+      "type": "object",
+      "description": "Tool-specific input parameters",
+      "additionalProperties": true
+    },
+    "files": {
+      "type": "object",
+      "description": "Files made available to the tool, keyed by the input name used in expressions.",
+      "additionalProperties": {
+        "$ref": "#/$defs/ExecutionFileEnvelope"
+      }
+    },
+    "credentials": {
+      "type": "object",
+      "description": "Ephemeral secret names and values merged into the run context. These values are not saved.\nPrefer a saved credential and `options.pinnedCredentials` for reusable integrations.\n",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "includeStepResultData": {
+      "type": "boolean",
+      "default": false,
+      "description": "Include each step's result data in a synchronous response."
+    },
+    "stateFixture": {
+      "type": "object",
+      "description": "Seed sourceData.persistedState for this run instead of the tool's persistent state.\nA seeded run never reads or saves persistent state changes, so it can test warm-state\nbehavior (watermarks, cursors, dedupe) without touching real state. To adopt a state\npermanently, use PUT /tools/{toolId}/state.\n",
+      "additionalProperties": true
+    },
+    "options": {
+      "type": "object",
+      "properties": {
+        "async": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, return immediately (202) and execute asynchronously. If false, wait for completion (200)."
+        },
+        "timeout": {
+          "type": "integer",
+          "description": "Request timeout in milliseconds",
+          "minimum": 1
+        },
+        "webhookUrl": {
+          "type": "string",
+          "description": "Callback URL or tool chain trigger when the run finishes. Supports two formats:\n\n**HTTP webhook (notify external service):**\nStandard URL (e.g., `https://your-app.com/webhooks/superglue`). \nReceives a POST request with the Run object in the body.\n\n**Tool chain (trigger another tool):**\nUse `tool:{toolId}` format (e.g., `tool:process-results`).\nAutomatically triggers the specified tool with the current tool's output as its input payload.\nThe chained tool run will have `requestSource: \"tool-chain\"`.\n\nTool chaining enables building multi-tool workflows where one tool's output feeds into another.\n"
+        },
+        "pinnedCredentials": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Per-system credential selection as `{ systemId: credentialsId }`.\nEach pinned credential must be accessible to the executing user.\nSystems not listed use the executing user's default credentials.\n"
+        },
+        "requestSource": {
+          "type": "string",
+          "description": "Override the request source identifier. Only client request sources are honored;\nother values are derived from the request context.\n",
+          "enum": [
+            "frontend",
+            "agent",
+            "mcp",
+            "cli"
+          ]
+        },
+        "traceId": {
+          "type": "string",
+          "description": "Custom trace ID for log tracking"
+        },
+        "clientInfo": {
+          "type": "object",
+          "description": "Optional client identity stored with the run.",
+          "properties": {
+            "name": {
+              "type": "string",
+              "maxLength": 256
+            },
+            "version": {
+              "type": "string",
+              "maxLength": 256
+            },
+            "userAgent": {
+              "type": "string",
+              "maxLength": 256
+            }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "AnyValue": {
+      "description": "Any valid JSON value."
+    },
+    "ExecutionFileEnvelope": {
+      "type": "object",
+      "required": [
+        "kind",
+        "filename",
+        "contentType",
+        "size"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "execution_file"
+          ]
+        },
+        "filename": {
+          "type": "string"
+        },
+        "contentType": {
+          "type": "string"
+        },
+        "size": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rawBase64": {
+          "type": "string",
+          "format": "byte",
+          "description": "Base64-encoded file contents when supplied inline."
+        },
+        "fileType": {
+          "type": "string",
+          "enum": [
+            "CSV",
+            "JSON",
+            "XML",
+            "YAML",
+            "EXCEL",
+            "HTML",
+            "PDF",
+            "DOCX",
+            "PPTX",
+            "ZIP",
+            "BINARY",
+            "RAW",
+            "AUTO"
+          ]
+        },
+        "extracted": {
+          "$ref": "#/$defs/AnyValue"
+        },
+        "parseError": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

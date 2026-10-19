@@ -1,0 +1,158 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/superglue/main/json-schema/superglue-connection-schema.json",
+  "title": "Connection",
+  "x-generated": "2026-10-19",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/superglue-openapi.yml#/components/schemas/Connection",
+  "type": "object",
+  "required": [
+    "id",
+    "name",
+    "systemId",
+    "userId",
+    "authentication",
+    "credentialKeys"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "systemId": {
+      "type": "string"
+    },
+    "userId": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string"
+    },
+    "authentication": {
+      "$ref": "#/$defs/ConnectionAuthentication"
+    },
+    "matchingOAuthAppId": {
+      "type": "string",
+      "readOnly": true,
+      "description": "App whose client ID and secret match the stored configuration."
+    },
+    "credentialKeys": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "key",
+          "hasValue"
+        ],
+        "properties": {
+          "key": {
+            "type": "string"
+          },
+          "hasValue": {
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    "isDefault": {
+      "type": "boolean"
+    },
+    "isOwner": {
+      "type": "boolean"
+    },
+    "permission": {
+      "type": "string",
+      "enum": [
+        "viewer",
+        "editor"
+      ]
+    },
+    "tunnel": {
+      "type": "object",
+      "properties": {
+        "tunnelId": {
+          "type": "string"
+        }
+      }
+    },
+    "usageInstructions": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "ConnectionAuthentication": {
+      "type": "object",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "none",
+            "api_key",
+            "basic_auth",
+            "oauth2",
+            "connection_string"
+          ]
+        },
+        "oauthClientMode": {
+          "type": "string",
+          "enum": [
+            "managed",
+            "dynamic",
+            "custom"
+          ]
+        },
+        "grantType": {
+          "type": "string",
+          "enum": [
+            "authorization_code",
+            "client_credentials",
+            "password",
+            "service_account",
+            "custom"
+          ]
+        },
+        "clientId": {
+          "type": "string"
+        },
+        "clientSecret": {
+          "type": "string",
+          "writeOnly": true
+        },
+        "authUrl": {
+          "type": "string"
+        },
+        "tokenUrl": {
+          "type": "string"
+        },
+        "scopes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "protocol": {
+          "type": "string"
+        },
+        "config": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}
