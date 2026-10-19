@@ -1,0 +1,6 @@
+generated: '2026-10-19'
+method: derived
+source: openapi/superglue-openapi.yml
+deployment:
+  mode: none
+  verified: derived

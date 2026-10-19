@@ -1,0 +1,392 @@
+{
+  "@context": {
+    "@vocab": "https://superglue.ai/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "superglue": "https://superglue.ai/schema#",
+    "ConnectionAuthentication": "superglue:ConnectionAuthentication",
+    "type": {
+      "@id": "superglue:type",
+      "@type": "xsd:string"
+    },
+    "oauthClientMode": {
+      "@id": "superglue:oauthClientMode",
+      "@type": "xsd:string"
+    },
+    "grantType": {
+      "@id": "superglue:grantType",
+      "@type": "xsd:string"
+    },
+    "clientId": {
+      "@id": "superglue:clientId",
+      "@type": "xsd:string"
+    },
+    "clientSecret": {
+      "@id": "superglue:clientSecret",
+      "@type": "xsd:string"
+    },
+    "authUrl": {
+      "@id": "superglue:authUrl",
+      "@type": "xsd:string"
+    },
+    "tokenUrl": {
+      "@id": "superglue:tokenUrl",
+      "@type": "xsd:string"
+    },
+    "scopes": {
+      "@id": "superglue:scopes",
+      "@container": "@list"
+    },
+    "protocol": {
+      "@id": "superglue:protocol",
+      "@type": "xsd:string"
+    },
+    "config": {
+      "@id": "superglue:config"
+    },
+    "ConnectionWrite": "superglue:ConnectionWrite",
+    "systemId": {
+      "@id": "superglue:systemId",
+      "@type": "xsd:string"
+    },
+    "name": {
+      "@id": "superglue:name",
+      "@type": "xsd:string"
+    },
+    "url": {
+      "@id": "superglue:url",
+      "@type": "xsd:string"
+    },
+    "authentication": {
+      "@id": "superglue:authentication",
+      "@type": "@id"
+    },
+    "oauthAppId": {
+      "@id": "superglue:oauthAppId",
+      "@type": "xsd:string"
+    },
+    "credentials": {
+      "@id": "superglue:credentials"
+    },
+    "makeDefault": {
+      "@id": "superglue:makeDefault",
+      "@type": "xsd:boolean"
+    },
+    "tunnel": {
+      "@id": "superglue:tunnel"
+    },
+    "usageInstructions": {
+      "@id": "superglue:usageInstructions",
+      "@type": "xsd:string"
+    },
+    "ConnectionUpdate": "superglue:ConnectionUpdate",
+    "expectedSystemId": {
+      "@id": "superglue:expectedSystemId",
+      "@type": "xsd:string"
+    },
+    "authenticationPatch": {
+      "@id": "superglue:authenticationPatch"
+    },
+    "removeSecretNames": {
+      "@id": "superglue:removeSecretNames",
+      "@container": "@list"
+    },
+    "Connection": "superglue:Connection",
+    "id": {
+      "@id": "superglue:id",
+      "@type": "xsd:string"
+    },
+    "userId": {
+      "@id": "superglue:userId",
+      "@type": "xsd:string"
+    },
+    "matchingOAuthAppId": {
+      "@id": "superglue:matchingOAuthAppId",
+      "@type": "xsd:string"
+    },
+    "credentialKeys": {
+      "@id": "superglue:credentialKeys",
+      "@container": "@list"
+    },
+    "isDefault": {
+      "@id": "superglue:isDefault",
+      "@type": "xsd:boolean"
+    },
+    "isOwner": {
+      "@id": "superglue:isOwner",
+      "@type": "xsd:boolean"
+    },
+    "permission": {
+      "@id": "superglue:permission",
+      "@type": "xsd:string"
+    },
+    "createdAt": {
+      "@id": "superglue:createdAt",
+      "@type": "xsd:dateTime"
+    },
+    "updatedAt": {
+      "@id": "superglue:updatedAt",
+      "@type": "xsd:dateTime"
+    },
+    "OAuthApp": "superglue:OAuthApp",
+    "source": {
+      "@id": "superglue:source",
+      "@type": "xsd:string"
+    },
+    "hasClientSecret": {
+      "@id": "superglue:hasClientSecret",
+      "@type": "xsd:boolean"
+    },
+    "createdByUserId": {
+      "@id": "superglue:createdByUserId",
+      "@type": "xsd:string"
+    },
+    "Tool": "superglue:Tool",
+    "version": {
+      "@id": "superglue:version",
+      "@type": "xsd:string"
+    },
+    "instruction": {
+      "@id": "superglue:instruction",
+      "@type": "xsd:string"
+    },
+    "inputSchema": {
+      "@id": "superglue:inputSchema"
+    },
+    "outputSchema": {
+      "@id": "superglue:outputSchema"
+    },
+    "steps": {
+      "@id": "superglue:steps",
+      "@container": "@list"
+    },
+    "outputTransform": {
+      "@id": "superglue:outputTransform",
+      "@type": "xsd:string"
+    },
+    "folder": {
+      "@id": "superglue:folder",
+      "@type": "xsd:string"
+    },
+    "archived": {
+      "@id": "superglue:archived",
+      "@type": "xsd:boolean"
+    },
+    "lastUsedAt": {
+      "@id": "superglue:lastUsedAt",
+      "@type": "xsd:dateTime"
+    },
+    "ToolStep": "superglue:ToolStep",
+    "modify": {
+      "@id": "superglue:modify",
+      "@type": "xsd:boolean"
+    },
+    "dataSelector": {
+      "@id": "superglue:dataSelector",
+      "@type": "xsd:string"
+    },
+    "failureBehavior": {
+      "@id": "superglue:failureBehavior",
+      "@type": "xsd:string"
+    },
+    "outputFile": {
+      "@id": "superglue:outputFile",
+      "@type": "xsd:boolean"
+    },
+    "RequestStepConfig": "superglue:RequestStepConfig",
+    "method": {
+      "@id": "superglue:method",
+      "@type": "xsd:string"
+    },
+    "queryParams": {
+      "@id": "superglue:queryParams"
+    },
+    "headers": {
+      "@id": "superglue:headers"
+    },
+    "body": {
+      "@id": "superglue:body",
+      "@type": "xsd:string"
+    },
+    "pagination": {
+      "@id": "superglue:pagination",
+      "@type": "@id"
+    },
+    "captureHttpResponse": {
+      "@id": "superglue:captureHttpResponse",
+      "@type": "xsd:boolean"
+    },
+    "HttpResponseMetadata": "superglue:HttpResponseMetadata",
+    "statusCode": {
+      "@id": "superglue:statusCode",
+      "@type": "xsd:integer"
+    },
+    "omittedHeaderCount": {
+      "@id": "superglue:omittedHeaderCount",
+      "@type": "xsd:integer"
+    },
+    "TransformStepConfig": "superglue:TransformStepConfig",
+    "transformCode": {
+      "@id": "superglue:transformCode",
+      "@type": "xsd:string"
+    },
+    "Pagination": "superglue:Pagination",
+    "pageSize": {
+      "@id": "superglue:pageSize",
+      "@type": "xsd:string"
+    },
+    "cursorPath": {
+      "@id": "superglue:cursorPath",
+      "@type": "xsd:string"
+    },
+    "stopCondition": {
+      "@id": "superglue:stopCondition",
+      "@type": "xsd:string"
+    },
+    "RunRequest": "superglue:RunRequest",
+    "runId": {
+      "@id": "superglue:runId",
+      "@type": "xsd:string"
+    },
+    "inputs": {
+      "@id": "superglue:inputs"
+    },
+    "files": {
+      "@id": "superglue:files"
+    },
+    "includeStepResultData": {
+      "@id": "superglue:includeStepResultData",
+      "@type": "xsd:boolean"
+    },
+    "stateFixture": {
+      "@id": "superglue:stateFixture"
+    },
+    "options": {
+      "@id": "superglue:options"
+    },
+    "Run": "superglue:Run",
+    "toolId": {
+      "@id": "superglue:toolId",
+      "@type": "xsd:string"
+    },
+    "tool": {
+      "@id": "superglue:tool",
+      "@type": "@id"
+    },
+    "systemIds": {
+      "@id": "superglue:systemIds",
+      "@container": "@list"
+    },
+    "status": {
+      "@id": "superglue:status",
+      "@type": "xsd:string"
+    },
+    "toolPayload": {
+      "@id": "superglue:toolPayload"
+    },
+    "data": {
+      "@id": "superglue:data"
+    },
+    "error": {
+      "@id": "superglue:error",
+      "@type": "xsd:string"
+    },
+    "stepResults": {
+      "@id": "superglue:stepResults",
+      "@container": "@list"
+    },
+    "requestSource": {
+      "@id": "superglue:requestSource",
+      "@type": "xsd:string"
+    },
+    "traceId": {
+      "@id": "superglue:traceId",
+      "@type": "xsd:string"
+    },
+    "resultStorageUri": {
+      "@id": "superglue:resultStorageUri",
+      "@type": "xsd:string"
+    },
+    "metadata": {
+      "@id": "superglue:metadata"
+    },
+    "fileArtifacts": {
+      "@id": "superglue:fileArtifacts",
+      "@container": "@list"
+    },
+    "FileArtifact": "superglue:FileArtifact",
+    "fileKey": {
+      "@id": "superglue:fileKey",
+      "@type": "xsd:string"
+    },
+    "filename": {
+      "@id": "superglue:filename",
+      "@type": "xsd:string"
+    },
+    "contentType": {
+      "@id": "superglue:contentType",
+      "@type": "xsd:string"
+    },
+    "size": {
+      "@id": "superglue:size",
+      "@type": "xsd:integer"
+    },
+    "downloadUrl": {
+      "@id": "superglue:downloadUrl",
+      "@type": "@id"
+    },
+    "StepResult": "superglue:StepResult",
+    "stepId": {
+      "@id": "superglue:stepId",
+      "@type": "xsd:string"
+    },
+    "success": {
+      "@id": "superglue:success",
+      "@type": "xsd:boolean"
+    },
+    "stepFileKeys": {
+      "@id": "superglue:stepFileKeys",
+      "@container": "@list"
+    },
+    "http": {
+      "@id": "superglue:http"
+    },
+    "CreateToolRequest": "superglue:CreateToolRequest",
+    "UpdateToolRequest": "superglue:UpdateToolRequest",
+    "Error": "superglue:Error",
+    "RunResults": "superglue:RunResults",
+    "storedAt": {
+      "@id": "superglue:storedAt",
+      "@type": "xsd:dateTime"
+    },
+    "ExecutionFileEnvelope": "superglue:ExecutionFileEnvelope",
+    "kind": {
+      "@id": "superglue:kind",
+      "@type": "xsd:string"
+    },
+    "rawBase64": {
+      "@id": "superglue:rawBase64",
+      "@type": "xsd:string"
+    },
+    "fileType": {
+      "@id": "superglue:fileType",
+      "@type": "xsd:string"
+    },
+    "extracted": {
+      "@id": "superglue:extracted",
+      "@type": "@id"
+    },
+    "parseError": {
+      "@id": "superglue:parseError",
+      "@type": "xsd:string"
+    }
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "Index Commerce API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects Index Commerce's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-19) from openapi/superglue-openapi.yml.",
+  "dcterms:created": "2026-10-19",
+  "dcterms:source": [
+    "openapi/superglue-openapi.yml"
+  ]
+}

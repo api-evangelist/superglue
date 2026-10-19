@@ -1,0 +1,25 @@
+generated: '2026-10-19'
+method: generated
+generator: extract-docs-artifacts.py skills (local)
+source: openapi/superglue-openapi.yml
+skills:
+- file: skills/superglue-get-run-results.md
+  name: superglue-get-run-results
+  api: openapi/superglue-openapi.yml
+  operations:
+  - getRun
+  - getRunResults
+  - listRunFiles
+  - getRunFileDownload
+- file: skills/superglue-webhooks-setup.md
+  name: superglue-webhooks-setup
+  api: openapi/superglue-openapi.yml
+  operations:
+  - verifyWebhook
+  - triggerWebhook
+- file: skills/superglue-create-and-list-connections.md
+  name: superglue-create-and-list-connections
+  api: openapi/superglue-openapi.yml
+  operations:
+  - createConnection
+  - listConnections

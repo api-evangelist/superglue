@@ -1,0 +1,30 @@
+generated: '2026-10-19'
+method: derived
+source: openapi/superglue-openapi.yml
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - query
+schemes:
+- name: ApiKeyAuth
+  type: http
+  scheme: bearer
+  bearerFormat: Static API Key
+  description: |-
+    Send a superglue API key in the Authorization header:
+    `Authorization: Bearer YOUR_API_KEY`.
+
+    Create and manage API keys from **API Keys** in the organization menu.
+  sources:
+  - openapi/superglue-openapi.yml
+- name: WebhookTokenAuth
+  type: apiKey
+  in: query
+  parameter: token
+  description: |-
+    Query-string authentication for webhook providers that cannot set an Authorization header.
+    The complete webhook URL contains a secret and must be protected accordingly.
+  sources:
+  - openapi/superglue-openapi.yml

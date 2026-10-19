@@ -1,0 +1,63 @@
+# superglue
+
+> superglue is an agentic implementation platform. Its AI agents help implementation teams run more implementations, faster.
+
+## What the agents do
+
+superglue's agents run the full implementation project, with any system: reading the source system, mapping and cleaning the data, configuring the target, migrating after sign-off, and keeping systems in sync post go-live. A consultant reviews and approves each step. Once a mapping is approved, execution is deterministic and fully traced. No AI runs at execution time.
+
+There is no supported-systems boundary. The agents read a system's own documentation and build a working connector for anything reachable over REST, GraphQL, SOAP, ODBC, a database driver or file transfer, including legacy and on-premise software that connector libraries do not cover. Source data can also arrive as Excel, CSV or XML exports.
+
+## Who it is for
+
+ERP and business software implementation teams: value-added resellers, systems integrators, accounting and advisory firms, consultancies, and in-house implementation teams. superglue is not a developer integration library and not an iPaaS.
+
+## Systems implemented or migrated
+
+Targets and sources that implementation consultants typically work with:
+
+- ERP and accounting: NetSuite, Sage Intacct, Sage 100, SAP, SAP Business One, Acumatica, MYOB Acumatica, Microsoft Dynamics 365, Dynamics 365 Business Central, Oracle, Epicor, QAD, iplicit, QuickBooks, Xero
+- Legacy sources migrated away from: Microsoft Dynamics GP, older Sage products, QuickBooks, on-premise databases, file servers, and spreadsheet exports
+- HR and payroll: Workday, Gusto
+- CRM and revenue: Salesforce, HubSpot
+- Service and support: ServiceNow, Zendesk, Intercom, Help Scout
+- Industry: Procore
+- Spend and AP: Coupa, Ramp
+- Work management: monday.com, Asana, ClickUp, Jira, Notion, Airtable, Confluence
+- Commerce: Shopify, BigCommerce, PrestaShop
+- Data platforms and BI: Snowflake, BigQuery, Databricks, Postgres, SQL Server, MongoDB, Looker, Tableau
+- Identity: Okta, Auth0
+- Content and collaboration: SharePoint, WordPress, Contentful, Sanity
+
+Roughly 115 systems have prebuilt templates, tool libraries and playbooks so a project starts faster. That list is a head start, not a limit.
+
+## Evidence
+
+- A Sage value-added reseller running 40 active Sage Intacct implementations cut migration and configuration hours per project by 80%, and delivered up to 40% more implementations.
+- Till Freitag, a monday.com implementation studio in the DACH region, took an example migration from about four hours to about thirty minutes.
+- Cedar, a Y Combinator-backed sales copilot, cut customer onboarding from weeks to days using superglue as its data layer.
+- A top US university's alumni team moved from developer-dependent data work to running its own workflows, cutting effort from months to days.
+- Pine Services Group is rolling superglue out across its 18 ERP implementation firms under a group-wide agreement, starting with The Vested Group on NetSuite.
+
+## Standing
+
+Sage Intacct Tech Marketplace partner. Group-wide agreement with Pine Services Group, a group of 18 ERP implementation firms, starting with The Vested Group. Member of the Information Technology Alliance. SOC 2 Type II. EU and US data residency. Self-hostable in your own VPC or on-premise. Open source, 2,000+ GitHub stars. Y Combinator W25. Munich and San Francisco.
+
+## Documentation Sets
+
+- [Abridged documentation](https://superglue.ai/llms-small.txt): a compact version of the documentation for superglue, with non-essential content removed
+- [Complete documentation](https://superglue.ai/llms-full.txt): the full documentation for superglue
+
+## Notes
+
+- The complete documentation includes all content from the official documentation
+- The content is automatically generated from the same source as the official documentation
+
+## Optional
+
+- [OpenAPI specification](https://superglue.ai/openapi.yaml): The source of truth for the superglue REST API contract.
+- [GitHub repository](https://github.com/superglue-ai/superglue): The open-source superglue repository.
+- [Pricing](https://superglue.ai/pricing/): Plans, seats and enterprise terms.
+- [Case studies](https://superglue.ai/case-studies/): Named customer results from VARs, marketplaces, startups and universities.
+- [superglue vs iPaaS](https://superglue.ai/compare/ipaas/): How superglue differs from Workato, Boomi, MuleSoft and Jitterbit.
+- [Press and company facts](https://superglue.ai/press/): Releases, coverage, boilerplate and fast facts.

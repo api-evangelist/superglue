@@ -1,0 +1,55 @@
+generated: '2026-10-19'
+method: derived
+generator: derive-problem-types.py
+source:
+- openapi/superglue-openapi.yml
+format: custom
+envelope:
+  media_type: application/json
+  schema: Error
+coverage:
+  operations: 25
+  statuses_declared: 6
+problems:
+- status: 400
+  title: Bad Request
+  description: Invalid list query parameters
+  operations: 8
+  media_types:
+  - application/json
+  schema: Error
+- status: 403
+  title: Forbidden
+  description: Not authorized to read this run
+  operations: 15
+  media_types:
+  - application/json
+  schema: Error
+- status: 404
+  title: Not Found
+  description: Tool not found
+  operations: 14
+  media_types:
+  - application/json
+  schema: Error
+- status: 405
+  title: Method Not Allowed
+  description: GET requests are only supported for webhook challenge verification
+  operations: 1
+  media_types:
+  - application/json
+  schema: Error
+- status: 409
+  title: Conflict
+  description: No available tool ID could be created from the requested ID
+  operations: 2
+  media_types:
+  - application/json
+  schema: Error
+- status: 503
+  title: Service Unavailable
+  description: File storage not configured
+  operations: 4
+  media_types:
+  - application/json
+  schema: Error

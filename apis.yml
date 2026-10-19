@@ -1,25 +1,104 @@
 aid: superglue
+
 name: Index Commerce
-description: 'Index Commerce is a company surfaced via the API Evangelist harvest backlog (source: g2-catalog)
-  and added to the network as a stub for full-pipeline profiling.'
+
+image: https://superglue.ai/logos/sg_logo.png
+
+description: Index Commerce provides a comprehensive e‑commerce platform that enables brands and retailers to create, manage, and scale online
+  storefronts. The solution offers a suite of tools for product catalog management, checkout optimization, inventory synchronization, and analytics,
+  helping merchants deliver seamless shopping experiences across web, mobile, and marketplace channels. Index Commerce focuses on flexibility,
+  integration capabilities, and performance, supporting businesses from startups to enterprise-level operations.
+
 url: https://raw.githubusercontent.com/api-evangelist/superglue/refs/heads/main/apis.yml
+
 x-type: company
+
 x-source: harvest:g2-catalog
-x-tier: stub
-x-tier-reason: harvest
+
+x-tier: profiled
+x-tier-reason: enrichment pass 2026-10-19 (modular-v1; was harvest)
+
 specificationVersion: '0.20'
+
 created: '2026-10-18'
+
 modified: '2026-10-18'
+
 tags:
 - Company
-apis: []
+- e-commerce
+- platform
+- storefront
+- analytics
+
 maintainers:
 - FN: Kin Lane
   email: kin@apievangelist.com
 - FN: APIs.json
   email: info@apis.io
+
 common:
+- type: AgenticAccess
+  url: agentic-access/superglue-agentic-access.yml
+- type: Spectral
+  url: rules/superglue-rules.yml
+- type: JSONLD
+  url: json-ld/superglue-context.jsonld
+- type: Vocabulary
+  url: vocabulary/superglue-vocabulary.yml
+- type: AgentSkill
+  url: skills/_index.yml
+- type: DataModel
+  url: data-model/superglue-data-model.yml
+- type: ErrorCatalog
+  url: errors/superglue-problem-types.yml
+- type: Conformance
+  url: conformance/superglue-conformance.yml
+- type: LLMsTxt
+  url: llms/superglue-llms.txt
+- type: WellKnown
+  url: well-known/superglue-well-known.yml
+- type: Hosts
+  url: hosts/superglue-hosts.yml
+- type: Vendors
+  url: vendors/superglue-vendors.yml
+- type: SDKs
+  url: packages/superglue-packages.yml
+- type: Packages
+  url: packages/superglue-packages.yml
+- type: Authentication
+  url: authentication/superglue-authentication.yml
 - type: DomainSecurity
   url: security/superglue-domain-security.yml
 - type: Website
   url: https://superglue.ai/
+- type: Documentation
+  url: https://superglue.ai/docs/
+- type: DeveloperPortal
+  url: https://superglue.ai/developers/
+- type: Blog
+  url: https://superglue.ai/blog/
+- type: Pricing
+  url: https://superglue.ai/pricing/
+- type: SignUp
+  url: https://superglue.ai/signup/
+- type: TermsOfService
+  url: https://superglue.ai/terms/
+- type: PrivacyPolicy
+  url: https://superglue.ai/privacy/
+
+apis:
+- name: superglue API
+  description: Manage tools, execute runs, receive webhooks, and retrieve run outputs.
+  humanURL: https://superglue.ai/docs/getting-started/introduction/
+  baseURL: https://api.superglue.cloud/v1
+  properties:
+  - type: OpenAPI
+    url: openapi/superglue-openapi.yml
+  aid: superglue:superglue-api
+x-enrichment:
+  date: '2026-10-19'
+  status: enriched
+  artifacts_added: 25
+  pass: modular-v1
+  engine: identity=local,contract=local,surfaces=local,docs=local,regulatory=local

@@ -1,0 +1,18 @@
+generated: '2026-10-19'
+method: none
+source:
+- https://zapier.com/apps/superglue/integrations
+- https://zapier.com/apps/index-commerce/integrations
+- https://n8n.io/integrations/superglue/
+- https://composio.dev/toolkits/superglue
+- https://monid.ai/tools/superglue
+checked:
+- https://composio.dev/toolkits/superglue
+- https://monid.ai/tools/superglue
+- https://n8n.io/integrations/superglue/
+- https://zapier.com/apps/index-commerce/integrations
+- https://zapier.com/apps/superglue/integrations
+summary: null
+marketplace_apps: []
+edges: []
+templates: []

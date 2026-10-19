@@ -1,0 +1,144 @@
+generated: '2026-10-19'
+method: derived
+generator: derive-vocabulary.py
+source: openapi/superglue-openapi.yml
+vocabulary:
+  name: Index Commerce Domain Vocabulary
+  description: 'Terms declared by Index Commerce''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-19'
+  terms:
+  - term: Connections
+    definition: Configure identities and reusable OAuth apps.
+    tags:
+    - Resource Group
+    source: openapi/superglue-openapi.yml
+  - term: Tools
+    definition: Create, inspect, update, and execute saved tools.
+    tags:
+    - Resource Group
+    source: openapi/superglue-openapi.yml
+  - term: Runs
+    definition: Inspect execution state and retrieve run outputs.
+    tags:
+    - Resource Group
+    source: openapi/superglue-openapi.yml
+  - term: Webhooks
+    definition: Verify webhook subscriptions and trigger tools from incoming events.
+    tags:
+    - Resource Group
+    source: openapi/superglue-openapi.yml
+  - term: ConnectionAuthentication
+    definition: 'Object declared by the contract with fields: type, oauthClientMode, grantType, clientId, clientSecret, authUrl, tokenUrl, scopes,
+      protocol, config.'
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/ConnectionAuthentication
+  - term: ConnectionWrite
+    definition: 'Object declared by the contract with fields: systemId, name, url, authentication, oauthAppId, credentials, makeDefault, tunnel,
+      usageInstructions.'
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/ConnectionWrite
+  - term: ConnectionUpdate
+    definition: 'Object declared by the contract with fields: expectedSystemId, systemId, name, url, authentication, authenticationPatch, oauthAppId,
+      credentials, removeSecretNames, tunnel, usageInstructions.'
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/ConnectionUpdate
+  - term: Connection
+    definition: 'Object declared by the contract with fields: id, name, systemId, userId, url, authentication, matchingOAuthAppId, credentialKeys,
+      isDefault, isOwner, permission, tunnel. (3 more)'
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/Connection
+  - term: OAuthApp
+    definition: 'Object declared by the contract with fields: id, name, systemId, source, authentication, hasClientSecret, createdByUserId, createdAt,
+      updatedAt.'
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/OAuthApp
+  - term: Tool
+    definition: A saved integration tool containing request and transformation steps.
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/Tool
+  - term: ToolStep
+    definition: A single execution step containing either a request configuration (API call) or a transform configuration (data transformation).
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/ToolStep
+  - term: RequestStepConfig
+    definition: 'Configuration for a request step. Protocol is detected from URL scheme: - HTTP/HTTPS: Standard REST API calls with query params,
+      headers, body - Postgres: postgres:// or postgresql:// URLs, body contains SQL query - FTP/SFTP: ftp://, ftps://, or sftp:// URLs, body
+      contains operation details'
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/RequestStepConfig
+  - term: HttpResponseMetadata
+    definition: Response metadata for an HTTP request step. Header names are lowercase; `set-cookie` values are arrays.
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/HttpResponseMetadata
+  - term: TransformStepConfig
+    definition: Configuration for a transform step. Transform steps execute JavaScript code to reshape data between request steps without making
+      external API calls.
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/TransformStepConfig
+  - term: Pagination
+    definition: Pagination configuration (HTTP/HTTPS only, not applicable to Postgres/FTP)
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/Pagination
+  - term: RunRequest
+    definition: 'Object declared by the contract with fields: runId, inputs, files, credentials, includeStepResultData, stateFixture, options.'
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/RunRequest
+  - term: Run
+    definition: 'Object declared by the contract with fields: runId, toolId, tool, systemIds, status, toolPayload, data, error, stepResults, options,
+      requestSource, traceId. (4 more)'
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/Run
+  - term: FileArtifact
+    definition: A file promoted as downloadable output by a tool step.
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/FileArtifact
+  - term: StepResult
+    definition: Execution result for a single tool step
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/StepResult
+  - term: CreateToolRequest
+    definition: Request body for creating a new tool
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/CreateToolRequest
+  - term: UpdateToolRequest
+    definition: Request body for updating an existing tool. All fields are optional — only provided fields are updated.
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/UpdateToolRequest
+  - term: Error
+    definition: 'Object declared by the contract with fields: error.'
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/Error
+  - term: RunResults
+    definition: Full (non-truncated) run results fetched from storage
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/RunResults
+  - term: AnyValue
+    definition: Any valid JSON value.
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/AnyValue
+  - term: ExecutionFileEnvelope
+    definition: 'Object declared by the contract with fields: kind, filename, contentType, size, rawBase64, fileType, extracted, parseError.'
+    tags:
+    - Object
+    source: openapi/superglue-openapi.yml#/components/schemas/ExecutionFileEnvelope

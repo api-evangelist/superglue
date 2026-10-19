@@ -1,0 +1,16 @@
+generated: '2026-10-19'
+method: searched
+source: https://registry.npmjs.org/-/v1/search?text=superglue
+packages:
+- name: '@superglue/client'
+  registry: npm
+  official: false
+  version: 4.0.0
+  published: '2026-07-27'
+  ownership_audit: 'registry metadata names neither the provider''s domain nor its GitHub org: official downgraded (harvest-packages.py --audit)'
+- name: '@superglue/cli'
+  registry: npm
+  official: true
+  version: null
+  note: package exists but version metadata not fetched
+  ownership_audit: metadata names superglue.ai
