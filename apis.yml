@@ -15,6 +15,12 @@ created: '2026-10-18'
 modified: '2026-10-18'
 tags:
 - Company
+- E-Commerce
+- Platform
+- Storefront
+- Analytics
+tags_raw:
+- Company
 - e-commerce
 - platform
 - storefront
@@ -146,6 +152,8 @@ apis:
   humanURL: https://superglue.ai/docs/getting-started/introduction/
   baseURL: https://api.superglue.cloud/v1
   tags:
+  - Webhook
+  tags_raw:
   - Webhooks
   properties:
   - type: OpenAPI
